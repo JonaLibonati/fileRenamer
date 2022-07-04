@@ -6,8 +6,8 @@ class Directory:
     def __init__(self, path: str) -> None:
         self.path = os.path.abspath(path)
         self.name = ''
-        self.files = []
-        self.directories = []
+        self.files = {}
+        self.directories = {}
         self._exists()
         self._instanceExistingFiles()
         self._redifineAtributes()
@@ -20,24 +20,26 @@ class Directory:
         for element in os.listdir(self.path):
             path = f'{self.path}/{element}'
             if os.path.isfile(path):
-                self.files.append(File(path))
+                f = File(path)
+                self.files.update({f.name : f})
             else:
-                self.directories.append(Directory(path))
+                d = Directory(path)
+                self.directories.update({d.name : d})
 
     def _redifineAtributes(self):
         self.name = self.path.split('/')[-1]
 
     def newDir(self, name):
-        for dir in self.directories:
+        for dir in self.directories.values():
             if dir.name == name:
                 raise FileExistsError (f'Error. There is already a directory named {dir.name} in {self.path}')
         new_dir = Directory(self.path/name)
-        self.directories.append(new_dir)
+        self.directories.append({new_dir.name : new_dir})
         return new_dir
 
     def data(self) -> dict:
         data = {
-            'Directory': self.selfData(),
+            f'{self.name}_dir': self.selfData(),
             'Content': self.contentData()
         }
         return data
@@ -51,14 +53,14 @@ class Directory:
 
     def contentData(self) -> dict:
         content = {}
-        for i, file in enumerate(self.files):
-            content.update({f'file{i}': file.data()})
-        for i, dir in enumerate(self.directories):
-            content.update({f'file{i}': dir.data()})
+        for file in self.files.values():
+            content.update({f'{file.name}_file': file.data()})
+        for dir in self.directories.values():
+            content.update({f'{dir.name}_dir': dir.data()})
         return content
 
     def empty(self) -> None:
-        if self.files != []:
+        if self.files != {}:
             for file in os.listdir(self.path):
                 os.remove(self.path + file)
                 self.files = []
@@ -67,7 +69,7 @@ class Directory:
     def addFiles(self, *args: File) -> Directory:
         for file in args:
             cp_file = file.copy(self)
-            self.files.append(cp_file)
+            self.files.update({cp_file.name : cp_file})
         return self
 
     def addDirectories(self, *args: Directory) -> Directory:
@@ -76,53 +78,49 @@ class Directory:
         return self
 
     def copyFilesTo(self, dir: Directory) -> None:
-        for file in self.files:
+        for file in self.files.values():
             file.copy(dir)
 
     def copy(self, dir: Directory) -> None:
         a = dir.newDir(self.name)
         self.copyFilesTo(a)
 
-    def _levelTree(self,level: int):
-        list_levels = []
-        for i in range(level):
-            list_levels.append('|  ')
-        for element in list_levels:
+    def _levelBuilding(self, folder: Directory, level = -1, i = 1, l = []) -> list:
+        if 0 < i <= level or level == -1:
+            level_list = l
+            folder._printLevel(level_list)
+            print(f'|')
+            for file in folder.files.values():
+                folder._printLevel(level_list)
+                print(f'|-- 📄 {file.name}{file.extension}')
+            for dir in folder.directories.values():
+                dir._printLevel(level_list)
+                print(f'|')
+                dir._printLevel(level_list)
+                print(f'|-- 📁 {dir.name}')
+                if dir == list(folder.directories.values())[-1]:
+                    level_list.append('    ')
+                else:
+                    level_list.append('|   ')
+                i = i + 1
+                dir._levelBuilding(dir, level, i, level_list)
+                i = i - 1
+                level_list.pop(-1)
+
+    def _printLevel(self, list):
+        for element in list:
             print(element, end = '')
 
-    def _levelFilesTree(self,level):
-        self._levelTree(level)
-        if self.files == []:
-            print('')
-        else:
-            print('|')
-            for file in self.files:
-                self._levelTree(level)
-                print(f'|-- 📄 {file.name}{file.extension}')
-            self._levelTree(level)
-
-    def _levelDirTree(self,level):
-        if self.directories == []:
-            print('')
-        else:
-            print('|')
-        for dir in self.directories:
-            self._levelTree(level)
-            print(f'|-- 📁 {dir.name}')
-            level = level + 1
-            dir._levelFilesTree(level)
-            dir._levelDirTree(level)
-            level = level - 1
-
-    def tree(self):
+    def tree(self, levels = -1):
         level = 0
         print('')
         print(f'🛣️ {self.path}')
         print('')
         print(f'📁 {self.name}')
-        self._levelFilesTree(level)
-        self._levelDirTree(level)
+        self._levelBuilding(self, levels)
+        print('')
 ###################################################################
+
 class File:
     def __init__(self, path: str) -> None:
         self.path = os.path.abspath(path)
@@ -168,22 +166,3 @@ class File:
         self.path = new
         self._redifineAtributes()
         return self
-
-def main():
-    dir = Directory('example')
-
-    print(dir.path)
-    print('')
-    print(dir.data())
-
-    for i, file in enumerate(dir.files):
-        print(f'--File {i}: {file.path}')
-        print(f'--File {i}: {file.name}')
-        print(f'--File {i}: {file.extension}')
-
-    dir.tree()
-
-if __name__ == '__main__':
-    main()
-
-

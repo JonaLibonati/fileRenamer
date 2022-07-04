@@ -18,7 +18,7 @@ class Menu():
 
 # Numeric Menu Object- Menu child
 class NumericMenu(Menu):
-    def addOptions(self, *args: Menu.Option) -> NumericMenu:
+    def addOptions(self, *args: Option) -> NumericMenu:
         for arg in args:
             self.options.append(arg)
         return self
@@ -46,7 +46,7 @@ class NumericMenu(Menu):
 
 # Binary Menu - Menu child
 class BinaryMenu(Menu):
-    def addOptions(self, optionYES: Menu.Option, optionNO: Menu.Option) -> self:
+    def addOptions(self, optionYES: Option, optionNO: Option) -> BinaryMenu:
             self.options.append(optionYES)
             self.options.append(optionNO)
             return self
@@ -61,7 +61,7 @@ class BinaryMenu(Menu):
                 self.answer = input('\nYou choose: ').lower().strip()
                 if not (self.isyes() or self.isno()):
                     print('\nInvalid input')
-                    print('Valid inputs: [y, n], [yes, no], [1, 0]')
+                    print('Valid inputs: [y, n], [yes, no], [1, 2]')
             if self.isyes():
                 self.options[0].function()
             else:
@@ -73,7 +73,7 @@ class BinaryMenu(Menu):
         return self.answer == 'y' or self.answer == 'yes' or self.answer == '1'
 
     def isno(self) -> bool:
-        return self.answer == 'n' or self.answer == 'no' or self.answer == '0'
+        return self.answer == 'n' or self.answer == 'no' or self.answer == '2'
 
 class CommandMenu(Menu):
     def __init__(self, name='', message='') -> None:

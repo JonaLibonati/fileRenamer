@@ -31,7 +31,6 @@ def manageCmd() -> cmdArguments.CmdArgs:
                 validinput(cmd)
     else:
         validinput(cmd)
-
     return cmd
 
 def help():
@@ -43,7 +42,7 @@ def addtoNames(dirPath):
     print('\n')
     dir = directory.Directory(dirPath)
 
-    for file in dir.files:
+    for file in dir.files.values():
         new_name = f'{file.name}{text}'
         try:
             file.rename(new_name)
