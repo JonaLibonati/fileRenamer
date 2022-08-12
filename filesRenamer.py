@@ -6,15 +6,15 @@ import sys
 
 def manageCmd() -> cmdArguments.CmdArgs:
     def validinput(cmd):
-            if not cmd.isValidInputQty(1,1):
-                if cmd.inputsQty() > 1:
-                    print('🔴 - Only one input is required\n')
-                else:
-                    print('🔴 - One input is required\n')
-                sys.exit()
-            elif not cmd.inputs[0].isValidInputType('dir'):
-                print('🔴 - Invalid input type. Please use a Directory as an input.\n')
-                sys.exit()
+        if not cmd.isValidInputQty(1,1):
+            if cmd.inputsQty() > 1:
+                print('🔴 - Only one input is required\n')
+            else:
+                print('🔴 - One input is required\n')
+            sys.exit()
+        elif not cmd.inputs[0].isValidInputType('dir'):
+            print('🔴 - Invalid input type. Please use a Directory as an input.\n')
+            sys.exit()
 
     cmd = cmdArguments.CmdArgs()
     option_without_inputs = ['-h', '--help']
@@ -34,10 +34,18 @@ def manageCmd() -> cmdArguments.CmdArgs:
     return cmd
 
 def help():
-    print('HELP')
+    print(
+        '-- filesRenamer.py --\n\n'\
+        'The py script allows to append a word to the name of multiple files.\n'\
+        'The script uses as an input a directory within the files to rename.\n\n'\
+        'Run the script by using the <dir-path> as a parameter within the files to rename:\n\n'\
+        '    python3 <script-paht> <dir-paht>\n\n'\
+        'For example, if you are located in the script folder:\n\n'\
+        '    python3 filesRenamer.py <dir-paht>\n\n'\
+    )
 
 def addtoNames(dirPath):
-    print('Enter the text to rename the files insade the directory\n')
+    print('Enter the text to rename the files inside the directory\n')
     text = input('Your text: ')
     print('\n')
     dir = directory.Directory(dirPath)

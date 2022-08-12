@@ -2,7 +2,7 @@ from __future__ import annotations
 #Menu Object - Father
 class Menu():
 
-    def __init__(self, name='', message = '') -> None:
+    def __init__(self, name = '', message = '') -> None:
         self.name = name
         self.message = message
         self.options = []
@@ -55,8 +55,8 @@ class BinaryMenu(Menu):
         print(self.name)
         print(self.message)
         if self.options != []:
-            print(f'Y) {self.options[0].name}')
-            print(f'N) {self.options[1].name}')
+            print(f'Y) Yes')
+            print(f'N) No')
             while not (self.isyes() or self.isno()):
                 self.answer = input('\nYou choose: ').lower().strip()
                 if not (self.isyes() or self.isno()):
@@ -75,18 +75,19 @@ class BinaryMenu(Menu):
     def isno(self) -> bool:
         return self.answer == 'n' or self.answer == 'no' or self.answer == '2'
 
+# Command Menu - Menu child
 class CommandMenu(Menu):
     def __init__(self, name='', message='') -> None:
         super().__init__(name, message)
         self.options = {}
 
-    def addOptions(self, *args: Menu.Option) -> CommandMenu:
+    def addOptions(self, *args: Option) -> CommandMenu:
         for arg in args:
             dict = {arg.name : arg.function}
             self.options.update(dict)
         return self
 
-    def ask(self, cmdOption) -> None:
+    def ask(self, cmdOption: str) -> None:
         try:
             self.options[f'{cmdOption}']()
         except KeyError as e:
