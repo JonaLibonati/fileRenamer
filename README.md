@@ -1,4 +1,4 @@
-# fileRenamer
+# fileRenamer.py
 The py script allows to append a word to the name of multiple files.  
 
 ## Running the script
