@@ -35,13 +35,13 @@ def manageCmd() -> cmdArguments.CmdArgs:
 
 def help():
     print(
-        '-- filesRenamer.py --\n\n'\
+        '-- fileRenamer.py --\n\n'\
         'The py script allows to append a word to the name of multiple files.\n'\
         'The script uses as an input a directory within the files to rename.\n\n'\
         'Run the script by using the <dir-path> as a parameter within the files to rename:\n\n'\
         '    python3 <script-paht> <dir-paht>\n\n'\
         'For example, if you are located in the script folder:\n\n'\
-        '    python3 filesRenamer.py <dir-paht>\n\n'\
+        '    python3 fileRenamer.py <dir-paht>\n\n'\
     )
 
 def addtoNames(dirPath):
